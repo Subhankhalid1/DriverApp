@@ -1,45 +1,73 @@
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
-import React,{useState} from 'react';
+import {ActivityIndicator, View, StyleSheet} from 'react-native'
+import React, {useState, useEffect} from 'react'
+import Header from '../Header/Header'
+import io from 'socket.io-client'
+const ENDPOINT = 'http://137.184.102.144:8000/'
+import {GiftedChat, Bubble, Send} from 'react-native-gifted-chat'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+export default function Messages ({navigation}) {
+  const [newMessages, setNewMessages] = useState('')
+  const [userTalk, setUserTalk]=useState([])
+  socket = io(ENDPOINT)
+  useEffect(async () => {
+    const jsonValue = await AsyncStorage.getItem('driver')
+     //jsonValue != null ? JSON.parse(jsonValue) : null
+    const result = JSON.parse(jsonValue)
+    console.log('driver data for msg', jsonValue)
+    setNewMessages(result)
+    socket.emit('join', result?._id)
+    socket.on('getMessage', msg => {
+      console.log(msg)
+      setUserTalk(...msg, {msg})
+    })
+  }, [])
 
-import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
-export default function Messages() {
-    const [messages, setMessages] = useState([
-        /**
-         * Mock message data
-         */
-        // example of system message
-        {
-          _id: 0,
-          text: 'New room created.',
-          createdAt: new Date().getTime(),
-          system: true
-        },
-        // example of chat message
-        {
-          _id: 1,
-          text: 'Henlo!',
-          createdAt: new Date().getTime(),
-          user: {
-            _id: 2,
-            name: 'Test User'
-          }
-        }
-      ]);
-      function handleSend(newMessage = []) {
-        setMessages(GiftedChat.append(messages, newMessage));
-      }
+  const [messages, setMessages] = useState([
+    
+    /**
+     * Mock message data
+     */
+    // example of system message
+    {
+      _id: 0,
+      text: 'New room created.',
+      createdAt: new Date().getTime(),
+      system: true,
+    },
+    // example of chat message
+    // {
+    //   _id: 1,
+    //   text: 'Hello, Rana!',
+    //   createdAt: new Date().getTime(),
+    //   user: {
+    //     _id: 2,
+    //     name: 'Test User',
+    //   },
+    // },
+  ])
+  function handleSend (newMessage = []) {
+    console.log("user.id",newMessages?._id,)
+    console.log("mrss", messages)
+    socket.emit(
+      'message',
+      (newMessages?._id, newMessages?._id, messages),
+    )
+  
+    setMessages(GiftedChat.append(messages, newMessage))
+  }
+  console.log("shhshs", messages)
 
   // Step 2: add a helper method
 
-  function renderLoading() {
+  function renderLoading () {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size='large' color='#bad759' />
       </View>
-    );
+    )
   }
-  
-  function renderBubble(props) {
+
+  function renderBubble (props) {
     return (
       // Step 3: return the component
       <Bubble
@@ -47,39 +75,41 @@ export default function Messages() {
         wrapperStyle={{
           right: {
             // Here is the color change
-            backgroundColor: '#6646ee'
-          }
+            backgroundColor: '#bad759',
+          },
         }}
         textStyle={{
           right: {
-            color: '#fff'
-          }
+            color: '#fff',
+          },
         }}
       />
-    );
+    )
   }
-  function scrollToBottomComponent() {
+  function scrollToBottomComponent () {
     return (
       <View style={styles.bottomComponentContainer}>
         <IconButton icon='chevron-double-down' size={36} color='#6646ee' />
       </View>
-    );
+    )
   }
   return (
-    <GiftedChat
-      messages={messages}
-      onSend={newMessage => handleSend(newMessage)}
-      user={{ _id: 1, name: 'User Test' }}
-      renderBubble={renderBubble}
-      placeholder='Type your message here...'
-      showUserAvatar
-      alwaysShowSend
-      
-      scrollToBottomComponent={scrollToBottomComponent}
-      // Step 3: add the prop
-      renderLoading={renderLoading}
-    />
-  );
+    <>
+      <Header navigation={navigation} component="Message Box" />
+      <GiftedChat
+        messages={messages}
+        onSend={newMessage => handleSend(newMessage)}
+        user={{_id: newMessages?._id, name: newMessages?.user?.name}}
+        renderBubble={renderBubble}
+        placeholder='Type your message here...'
+        showUserAvatar
+        alwaysShowSend
+        scrollToBottomComponent={scrollToBottomComponent}
+        // Step 3: add the prop
+        renderLoading={renderLoading}
+      />
+    </>
+  )
 }
 
 // Step 4: add corresponding styles
@@ -88,6 +118,6 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
-  }
-});
+    justifyContent: 'center',
+  },
+})

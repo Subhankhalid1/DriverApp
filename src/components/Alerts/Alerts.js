@@ -1,19 +1,39 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {View, Text, Image, Dimensions, TouchableOpacity} from 'react-native'
 import Header from '../Header/Header'
 import Pic from '../../assets/SliderImage/4.jpg'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 // import MapComponent from "./Map";
 import axios from 'axios'
 
 const Alerts = ({navigation}) => {
   const {width} = Dimensions.get('screen')
+  const [orderData, setOrderData]=useState()
+  useEffect(() => {
 
-  const _changeOrderStatus = async status => {
-      let obj={}
-    const _res = await axios.post(
-      'http://137.184.102.144:8000/api/order/changeOrderStatus',
-    );
+    profile()
+   // findOrderByID()
+  }, [])
+  const profile = async () => {
+    const jsonValue = await AsyncStorage.getItem('driver')
+    jsonValue != null ? JSON.parse(jsonValue) : null
+    const result = JSON.parse(jsonValue)
+    
 
+    // setProfileData(result)
+    const driverID=result?.user._id
+  console.log(' driver ID from===>', driverID)
+    await axios.post(`http://192.241.141.11:8000/api/order/myOrders`,{driverID})
+    .then(function (response) {
+      // handle success
+      console.log("driver order=====>",JSON.stringify(response.data));
+      // setOrderData(JSON.stringify(response.data))
+      //navigation.navigate("Login")
+    })
+    .catch(function (error) {
+      // handle error
+      console.warn(error.message);
+    });
   }
   return (
     <View style={{flex: 1}}>

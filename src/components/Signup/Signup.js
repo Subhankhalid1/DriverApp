@@ -17,16 +17,18 @@ import GetLocation from 'react-native-get-location';
 const {height} = Dimensions.get('screen')
 const Signup = ({navigation}) => {
 //   const {userRegister, setUserRegister} = useContext(Globalcontext)
-const [latitude, setlatitude]=useState()
-const [longitude, setlongitude] = useState()
+const [location, setlocation] = useState({
+  longitude: 31.1505,
+  latitude: 72.6812,
+})
   const [user, setUser] = useState({
     name: '',
     email: '',
     password: '',
     phone: '',
     location:{
-      latitude:latitude,
-      longitude:longitude
+      latitude:location.latitude,
+      longitude:location.longitude
     }
   })
   const handleChange = (name, value)=> {
@@ -40,7 +42,7 @@ const [longitude, setlongitude] = useState()
   const handleSignUp = async (e )=> {
    // e.preventDefault()
     // const params=JSON.stringify(user)
-    await axios.post(`http://137.184.102.144:8000/api/driver/register`,user)
+    await axios.post(`http://192.241.141.11:8000/api/driver/register`,user)
     .then(function (response) {
       // handle success
       console.log(JSON.stringify(response.data));
@@ -50,43 +52,31 @@ const [longitude, setlongitude] = useState()
       // handle error
       console.warn(error.message);
     });
-    // localStorage.setItem('token', JSON.stringify(data.token))
-    // await AsyncStorage.setItem(compoundKey, JSON.stringify(data));
-  
-    // setUserRegister(data.user)
+
+
   }
-  // useEffect(()=>{
-  //   Geolocation.getCurrentPosition(info => {
-  //     setlatitude(info.coords.latitude)
-  //     setlongitude(info.coords.longitude)
-  //    } )
-    
-  //   },[])
-    useEffect(()=>{
+  
+    useEffect(() => {
       GetLocation.getCurrentPosition({
-          enableHighAccuracy: true,
-          timeout: 15000,
+        enableHighAccuracy: true,
+        timeout: 15000,
       })
-      .then(location => {
-          console.log("latitudes",location.latitude);
-          console.log("longitude",location.longitude);
-          setlatitude(location.latitude)
-          setlongitude(location.longitude)
-          // setState({
-           
-          //  destination:{ 
-          //    ...state.destination,
-          //  },
-          // origins:{
-          //     latitude: location.latitude,
-          //     longitude: location.longitude
-          //  } });
-      })
-      .catch(error => {
-          const { code, message } = error;
-          console.warn(code, message);
-      })
-    })
+        .then(location => {
+          console.log('latitudes', location.latitude, location.longitude)
+          setlocation({
+            ...location,
+            latitude: location.latitude,
+            longitude: location.longitude,
+          })
+        })
+        .catch(error => {
+          const {code, message} = error
+          console.warn(code, message)
+        })
+    
+    
+      },[])
+      console.log(location)
   return (
     <ScrollView style={styles.main}>
       <View style={styles.headingView}>

@@ -36,7 +36,7 @@ const Login = ({navigation}) => {
   console.log(user)
   const handleSignIn = async (e )=> {
  
-     axios.post('http://137.184.102.144:8000/api/driver/login', user)
+     axios.post('http://192.241.141.11:8000/api/driver/login', user)
      .then(function (response) {
       // handle success
       console.log(response.data)
@@ -113,7 +113,7 @@ const Login = ({navigation}) => {
         <TouchableOpacity
           style={{paddingHorizontal: 50}}
           >
-          <Text style={styles.button} onPress={() => handleSignIn()} >
+          <Text style={styles.button} onPress={ handleSignIn} >
       
             LOGIN
           </Text>

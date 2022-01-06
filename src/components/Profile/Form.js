@@ -4,40 +4,44 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Input } from 'react-native-elements';
 import { View, Text } from "react-native";
 
-const Form = () => {
+const Form = ({profile}) => {
     return <View style={{ marginTop: 25 }}>
-        <Input
-            placeholder='First Name'
+    
+        {/* <Input
+            placeholder={profile?.user?.phone}
             leftIcon={<Icon name='user' size={24} color='#bad759' />}
             rightIcon={<MaterialIcon name='pencil' size={24} color='#bad759' />}
         // errorMessage='ENTER A VALID ERROR HERE'
-        />
-        <Input
-            placeholder='Last Name'
-            leftIcon={<Icon name='user' size={24} color='#bad759' />}
-            rightIcon={<MaterialIcon name='pencil' size={24} color='#bad759' />}
-        // errorMessage='ENTER A VALID ERROR HERE'
-        />
-        <Input
-            placeholder='Email Address'
-            leftIcon={<MaterialIcon name='email' size={24} color='#bad759' />}
-            rightIcon={<MaterialIcon name='pencil' size={24} color='#bad759' />}
-        // errorMessage='ENTER A VALID ERROR HERE'
-        />
-        <Text style={{
-            textAlign: "center",
-            backgroundColor: "#bad759",
-            marginHorizontal: 20,
-            borderRadius: 50,
-            color: "white",
+        /> */}
+        
+         <Text style={{
+            
+            
+            marginHorizontal: 10,
+            borderRadius:20,
+            color: "#777",
             fontSize: 20,
-            paddingVertical: 8,
+            paddingVertical: 10,
             marginTop: 10,
             marginBottom:10
         
             
         }}
-        >Save</Text>
+        >{profile?.user?.phone}</Text>
+        <Text style={{
+            
+            
+            marginHorizontal: 10,
+            borderRadius:20,
+            color: "#777",
+            fontSize: 20,
+            paddingVertical: 10,
+            marginTop: 10,
+            marginBottom:10
+        
+            
+        }}
+        >{profile?.user?.email}</Text>
     </View>
 }
 
